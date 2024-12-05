@@ -52,9 +52,9 @@ function createTask(description){
 
 function updateTask(id, updatedDescription){
   const tasksQuantity = JSON.parse(fs.readFileSync(jsonDirectory, {encoding: "utf-8"})).tasksQuantity;
-  const invalidId = parseInt(id) || id === undefined || id < 0  === NaN || id > tasksQuantity;
-  const invalidDescription = updatedDescription === "" || updatedDescription === undefined;
-  if(invalidId || invalidDescription){
+  const isInvalidId = parseInt(id) === NaN || id === undefined || id < 0 || id > tasksQuantity;
+  const isDescriptionInvalid = updatedDescription === "" || updatedDescription === undefined;
+  if(isInvalidId || isDescriptionInvalid){
     console.log("Error: Invalid id or description");
     return;
   }
