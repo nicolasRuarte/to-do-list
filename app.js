@@ -13,7 +13,6 @@ import fs from "node:fs";
 const args = proccess.argv;
 const jsonDirectory = "./tasks.json";
 const defaultJSONvalue =  { tasksQuantity: 0, tasks: [] } ;
-let tasksQuantity = 0;
 
 function checkAndCreateJSON(){
     if(fs.existsSync(jsonDirectory)){
@@ -51,18 +50,34 @@ function createTask(description){
   console.log(`\nTask added successfully with ID of ${tasksQuantity}`)
 }
 
-function updateTask(id, attribute, update){
+function updateTask(id, updatedDescription){
+  const tasksQuantity = JSON.parse(fs.readFileSync(jsonDirectory, {encoding: "utf-8"})).tasksQuantity;
+  const invalidId = parseInt(id) || id === undefined || id < 0  === NaN || id > tasksQuantity;
+  const invalidDescription = updatedDescription === "" || updatedDescription === undefined;
+  if(invalidId || invalidDescription){
+    console.log("Error: Invalid id or description");
+    return;
+  }
+
   const tasksList = JSON.parse(fs.readFileSync(jsonDirectory, {encoding: "utf-8"}));
-
-
+  tasksList.tasks[id] = updatedDescription;
 }
 
 function deleteTask(id){}
 
-function listTasks(){
+function listTasks(selector){
   const tasksList = JSON.parse(fs.readFileSync(jsonDirectory, {encoding: "utf-8"}));
 
-  console.log(tasksList.tasks);
+  switch(selector){
+    case "done":
+      break;
+    case "todo":
+      break;
+    case "in-progress":
+      break;
+    default:
+      console.log(`Invalid argument. Use "done", "todo" or "in-progress" instead.`)
+  }
 }
 
 function readArgumentList(args){
@@ -71,7 +86,7 @@ function readArgumentList(args){
       createTask(args[3]);
       break;
     case "update":
-      console.log("update");
+      updateTask(args[3], args[4]);
       break;
     case "delete":
       console.log("delete")
