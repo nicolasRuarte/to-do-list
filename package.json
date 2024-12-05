@@ -1,14 +1,17 @@
 {
-  "name": "tasks",
+  "name": "to-do-list",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "bin/app.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node app.js"
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "bin": {
+    "tasks": "./bin/app.js"
+  }
 }
