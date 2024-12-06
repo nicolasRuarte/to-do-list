@@ -63,21 +63,58 @@ function updateTask(id, updatedDescription){
   tasksList.tasks[id] = updatedDescription;
 }
 
+function markTask(option, id){
+  const tasksList = JSON.parse(fs.readFileSync(jsonDirectory, {encoding: "utf-8"})).tasks;
+  let previousStatus = "";
+
+  switch(option){
+    case "mark-in-progress":
+      previousStatus = tasksList[id].status;
+      tasksList[id].status = "in-progress";
+    case "mark-done":
+      tasksList[id].status = "done";
+    case "mark-todo":
+      tasksList[id].status = "todo";
+  }
+}
+
 function deleteTask(id){}
 
 function listTasks(selector){
-  const tasksList = JSON.parse(fs.readFileSync(jsonDirectory, {encoding: "utf-8"}));
+  const tasksList = JSON.parse(fs.readFileSync(jsonDirectory, {encoding: "utf-8"})).tasks;
+  let tasksToList = [];
 
   switch(selector){
     case "done":
+      tasksList.forEach(task => {
+        if (task.status === "done"){
+          tasksToList.push(task);
+        }
+      });
       break;
     case "todo":
+      tasksList.forEach(task => {
+        if (task.status === "todo"){
+          tasksToList.push(task);
+        }
+      });
       break;
     case "in-progress":
+      tasksList.forEach(task => {
+        if (task.status === "in-progress"){
+          tasksToList.push(task);
+        }
+      });
+      break;
+    case undefined:
+      tasksToList = tasksList;
       break;
     default:
       console.log(`Invalid argument. Use "done", "todo" or "in-progress" instead.`)
+      break;
   }
+
+  console.log(tasksToList);
 }
 
 function readArgumentList(args){
@@ -92,8 +129,14 @@ function readArgumentList(args){
       console.log("delete")
       break;
     case "list":
-      listTasks();
+      listTasks(args[3]);
       break;
+    case "mark-in-progress":
+      markTask("mark-in-progress")
+    case "mark-done":
+      console.log("mark-done")
+    case "mark-todo":
+      console.log("mark-todo")
     default:
       if(args[2] != undefined) console.log(`"${args[2]}" is not a valid method`);
       break;
