@@ -1,6 +1,7 @@
 #!/usr/bin/env node  
 import proccess from "node:process";
 import fs from "node:fs";
+import { stringify } from "node:querystring";
 
 /*
   Tasks properties
@@ -47,11 +48,12 @@ function createTask(description){
   tasksListParse.tasks.push(newTask);
   fs.writeFileSync(jsonDirectory, JSON.stringify(tasksListParse));
 
-  console.log(`\nTask added successfully with ID of ${tasksQuantity}`)
+  console.log(`\nTask added successfully with ID of ${newTask.id}`)
 }
 
 function updateTask(id, updatedDescription){
-  const tasksQuantity = JSON.parse(fs.readFileSync(jsonDirectory, {encoding: "utf-8"})).tasksQuantity;
+  const tasksList = JSON.parse(fs.readFileSync(jsonDirectory, { encoding: "utf-8" }));
+  const tasksQuantity = tasksList.tasksQuantity;
   const isInvalidId = parseInt(id) === NaN || id === undefined || id < 0 || id > tasksQuantity;
   const isDescriptionInvalid = updatedDescription === "" || updatedDescription === undefined;
   if(isInvalidId || isDescriptionInvalid){
@@ -59,23 +61,39 @@ function updateTask(id, updatedDescription){
     return;
   }
 
-  const tasksList = JSON.parse(fs.readFileSync(jsonDirectory, {encoding: "utf-8"}));
-  tasksList.tasks[id] = updatedDescription;
+  const datetime = new Date;
+  tasksList.tasks[id].description = updatedDescription;
+  tasksList.tasks[id].updatedAt = `${datetime.getDate()}/${datetime.getMonth()}/${datetime.getFullYear()}, ${datetime.getHours()}:${datetime.getMinutes()}:${datetime.getSeconds()}`; 
+  
+  fs.writeFileSync(jsonDirectory, JSON.stringify(tasksList));
+
+  console.log(`Task with ID of ${id} updated succesfully`);
 }
 
-function markTask(option, id){
-  const tasksList = JSON.parse(fs.readFileSync(jsonDirectory, {encoding: "utf-8"})).tasks;
+function markTask(id, option){
+  const jsonParse = JSON.parse(fs.readFileSync(jsonDirectory, {encoding: "utf-8"}));
   let previousStatus = "";
 
   switch(option){
     case "mark-in-progress":
-      previousStatus = tasksList[id].status;
-      tasksList[id].status = "in-progress";
+      previousStatus = jsonParse.tasks[id].status;
+      jsonParse.tasks[id].status = "in-progress";
+      break;
     case "mark-done":
-      tasksList[id].status = "done";
+      previousStatus = jsonParse.tasks[id].status;
+      jsonParse.tasks[id].status = "done";
+      break;
     case "mark-todo":
-      tasksList[id].status = "todo";
+      previousStatus = jsonParse.tasks[id].status;
+      jsonParse.tasks[id].status = "todo";
+      break;
+    default:
+      console.log("Invalid option");
+      break;
   }
+
+  fs.writeFileSync(jsonDirectory, JSON.stringify(jsonParse));
+  console.log(`Updated status from ${previousStatus} to ${jsonParse.tasks[id].status} from task with ID of ${id}`);
 }
 
 function deleteTask(id){}
@@ -114,7 +132,21 @@ function listTasks(selector){
       break;
   }
 
-  console.log(tasksToList);
+  if (tasksToList === undefined || tasksToList.length === 0){
+    console.log("No elements found");
+    return;
+  }
+
+  console.log("Resultado:")
+  for (let i = 0; i < tasksToList.length; i++){
+    console.log(`ID: ${tasksToList[i].id}
+      Description: ${tasksToList[i].description}
+      Status: ${tasksToList[i].status}
+      Created at: ${tasksToList[i].createdAt}
+      Updated at: ${tasksToList[i].updatedAt}
+      `)
+      
+  }
 }
 
 function readArgumentList(args){
@@ -132,11 +164,11 @@ function readArgumentList(args){
       listTasks(args[3]);
       break;
     case "mark-in-progress":
-      markTask("mark-in-progress")
+      markTask(args[3], "mark-in-progress")
     case "mark-done":
-      console.log("mark-done")
+      markTask(args[3], "mark-done");
     case "mark-todo":
-      console.log("mark-todo")
+      markTask(args[3], "mark-todo");
     default:
       if(args[2] != undefined) console.log(`"${args[2]}" is not a valid method`);
       break;
