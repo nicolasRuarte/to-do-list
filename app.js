@@ -2,6 +2,7 @@
 import proccess from "node:process";
 import fs from "node:fs";
 import { stringify } from "node:querystring";
+import { isStringObject } from "node:util/types";
 
 /*
   Tasks properties
@@ -28,18 +29,25 @@ function checkAndCreateJSON(){
 }
 
 function checkIdIsValid(id){
-  const isIdInvalid = parseInt(id) === NaN || id === undefined || id < 0 || id > tasksQuantity;
-  if(isIdInvalid){
-    console.log("Error: Invalid id");
+  const tasksQuantity = JSON.parse(fs.readFileSync(jsonDirectory, {encoding: "utf-8"})).tasksQuantity;
+  const isIdInvalid = id === "" || id < 0 || id > tasksQuantity;
+  if(id === undefined){
+    console.log("Error: there was no specified id.")
     return false;
+  }else if (isIdInvalid){
+    console.log("Error: Invalid id.");
+    return false
   }else {
     return true;
   }
 }
 
 function checkStringArgumentIsValid(arg){
-  if (arg === undefined || arg === ""){
-    console.log("Invalid argument");
+  if (arg === undefined ){
+    console.log("Error: argument needed but not received");
+    return false;
+  }else if (arg === ""){
+    console.log("Error: argument is empty string")
     return false;
   }else {
     return true;
@@ -112,10 +120,7 @@ function markTask(id, option){
 }
 
 function deleteTask(id){
-  if (!checkIdIsValid){
-    console.log("Please select a valid task ID")
-    return;
-  }
+  if (!checkIdIsValid(id)) return;
 
   const json = JSON.parse(fs.readFileSync(jsonDirectory, { encoding: "utf-8"}));
   json.tasks.splice(id, 1);
