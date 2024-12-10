@@ -30,7 +30,7 @@ function checkAndCreateJSON(){
 
 function checkIdIsValid(id){
   const tasksQuantity = JSON.parse(fs.readFileSync(jsonDirectory, {encoding: "utf-8"})).tasksQuantity;
-  const isIdInvalid = id === "" || id < 0 || id > tasksQuantity;
+  const isIdInvalid = id === "" || id < 0 || id > tasksQuantity || isNaN(id);
   if(id === undefined){
     console.log("Error: there was no specified id.")
     return false;
@@ -56,7 +56,7 @@ function checkStringArgumentIsValid(arg){
 }
 
 //Functionality functions
-function createTask(description){
+function addTask(description){
   if (!checkStringArgumentIsValid(description)) return;
 
   let tasksList = fs.readFileSync(jsonDirectory, { encoding: "utf-8"});
@@ -75,7 +75,7 @@ function createTask(description){
   tasksListParse.tasks.push(newTask);
   fs.writeFileSync(jsonDirectory, JSON.stringify(tasksListParse));
 
-  console.log(`\nTask added successfully with ID of ${newTask.id}`)
+  console.log(`Task added successfully with ID of ${newTask.id}`)
 }
 
 function updateTask(id, updatedDescription){
@@ -188,7 +188,7 @@ function listTasks(selector){
 function readArgumentList(args){
   switch(args[2]){
     case "add":
-      createTask(args[3]);
+      addTask(args[3]);
       break;
     case "update":
       updateTask(args[3], args[4]);
