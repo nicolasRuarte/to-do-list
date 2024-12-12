@@ -3,6 +3,14 @@
 Tasks is an application to manage your tasks, you can view all your tasks, check their status and mark them as done or in progress.
 Made as a solution to the Task Tracker project for backend from the website [roadmap.sh](roadmap.sh)
 
+## Installation
+### Linux
+1. Install the binary from the Releases section of this repository. Save that file in any directory of your choice.
+2. Copy the path of the directory. For example, if you saved the binary in your desktop your path will be `~/Desktop`.
+3. Now go to your user directory (`~/`) and open the file `.bashrc`.
+4. Go to the end of the file and add this line `export PATH="(your directory):$PATH"`.
+5. Optionally, you can verify the result with the command `echo $PATH`.
+
 ## Usage
 To use the application you'll need to write its name on the terminal and pass the arguments of the action you want to do. For example, if you want to create a task you you type this into the console: `tasks add "New task"`
 
