@@ -4,6 +4,8 @@ Tasks is an application to manage your tasks, you can view all your tasks, check
 Made as a solution to the Task Tracker project for backend from the website [roadmap.sh](roadmap.sh)
 
 ## Installation
+Note: To run this application you need to have installed NodeJS in your machine.
+
 ### Linux
 1. Install the binary from the Releases section of this repository. Save that file in any directory of your choice.
 2. Copy the path of the directory. For example, if you saved the binary in your desktop your path will be `~/Desktop`.
